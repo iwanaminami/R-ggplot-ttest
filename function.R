@@ -13,6 +13,7 @@ plot_jitter_ttest <- function(data, col_values, col_name, label_name,
                               ttest_remove_bool = TRUE,
                               ttest_sig = 0.05,
                               ttest_y_scale = 0.1,
+                              outlier_bool = FALSE,
                               plot_title = "Awesome title",
                               x_title = "x title", y_title = "y title", ...) {
   
@@ -52,13 +53,19 @@ plot_jitter_ttest <- function(data, col_values, col_name, label_name,
   # jitter plot and box plot
   plt <- ggplot()
   
+  if (outlier_bool) {
+    coef_boxplot <- Inf
+  }else {
+    coef_boxplot <- 1.5
+  }
+  
   if (log_bool) {
     plt <- plt +
-      geom_boxplot(data = data_temp, aes(x = x, y = log(y)), outlier.shape = NA, width = 0.5) +
+      geom_boxplot(data = data_temp, aes(x = x, y = log(y)), outlier.shape = NA, width = 0.5, coef = coef_boxplot) +
       geom_jitter(data = data_temp, aes(x = x, y = log(y)), height = 0, width = 0.2)
   }else {
     plt <- plt +
-      geom_boxplot(data = data_temp, aes(x = x, y = y), outlier.shape = NA, width = 0.5) +
+      geom_boxplot(data = data_temp, aes(x = x, y = y), outlier.shape = NA, width = 0.5, coef = coef_boxplot) +
       geom_jitter(data = data_temp, aes(x = x, y = y), height = 0, width = 0.5)
   }
   
