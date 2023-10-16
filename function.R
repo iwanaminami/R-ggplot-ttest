@@ -38,6 +38,9 @@ plot_jitter_ttest <- function(data, col_values, col_name, label_name,
     # print(data_temp)
   }
   
+  # print(col_name)
+  # print(label_name)
+  
   data_temp <- data_temp[which(data_temp[, col_name] == label_name), ][, c(category, col_values)]
   colnames(data_temp) <- c("x", "y")
   if (!is.null(levels_manual)) {
@@ -72,6 +75,8 @@ plot_jitter_ttest <- function(data, col_values, col_name, label_name,
     if (!is.null(levels_manual)) {
       levels_temp <- levels_manual
     }
+    
+    # print(data_temp)
     
     res_ttest <- data.frame()
     
@@ -123,20 +128,23 @@ plot_jitter_ttest <- function(data, col_values, col_name, label_name,
       ymin_ttest <- max(data_temp$y) + ttest_y_scale*ydiff_ttest
     }
     
-    df_ttest$y.position <- ymin_ttest + (0:(nrow(df_ttest) - 1))*ttest_y_scale*ydiff_ttest
-    
-    # modify significant digits of p-values for plot
-    df_ttest <- mutate(df_ttest,
-                       label = ifelse(df_ttest$label < 1, formatC(df_ttest$label, digits = 3), formatC(df_ttest$label, digits = 2, format = "f")))
-    
-    # add p-values to plot
-    plt <- plt +
-      add_pvalue(df_ttest,
-                 xmin = "group1",
-                 xmax = "group2",
-                 label = "p = {label}",
-                 y.position = "y.position",
-                 tip.length = 0) 
+    if(nrow(df_ttest) != 0) {
+      df_ttest$y.position <- ymin_ttest + (0:(nrow(df_ttest) - 1))*ttest_y_scale*ydiff_ttest
+      
+      # modify significant digits of p-values for plot
+      df_ttest <- mutate(df_ttest,
+                         label = ifelse(df_ttest$label < 1, formatC(df_ttest$label, digits = 3), formatC(df_ttest$label, digits = 2, format = "f")))
+      
+      # add p-values to plot
+      plt <- plt +
+        add_pvalue(df_ttest,
+                   xmin = "group1",
+                   xmax = "group2",
+                   label = "p = {label}",
+                   y.position = "y.position",
+                   tip.length = 0) 
+      
+    }
     
     out$ttest <- res_ttest
   }
